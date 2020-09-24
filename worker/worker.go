@@ -74,12 +74,15 @@ func (worker *Worker) Start(ctx context.Context, h Handler) {
 			log.Println("worker: Stopping polling because a context kill signal was sent")
 			return
 		default:
-			worker.Log.Debug("worker: Start Polling")
+			worker.Log.Debug("new-worker: Start Polling")
 
 			params := &sqs.ReceiveMessageInput{
 				QueueUrl:            aws.String(worker.Config.QueueURL), // Required
 				MaxNumberOfMessages: aws.Int64(worker.Config.MaxNumberOfMessage),
 				AttributeNames: []*string{
+					aws.String("All"), // Required
+				},
+				MessageAttributeNames: []*string{
 					aws.String("All"), // Required
 				},
 				WaitTimeSeconds: aws.Int64(worker.Config.WaitTimeSecond),
